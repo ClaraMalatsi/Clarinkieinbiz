@@ -2,16 +2,16 @@ import React, { useState, useCallback, useMemo } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import HomePage from "./components/HomePage";
-import ProductsPage from "./components/ProductsPage";
-import CartDrawer from "./components/CartDrawer";
-import CheckoutModal from "./components/CheckoutModal";
-import AuthModal from "./components/AuthModal";
-import FavouritesPage from "./components/FavouritesPage";
-import OrderHistoryPage from "./components/OrderHistoryPage";
+import HomePage from "./components/Homepage";
+import ProductsPage from "./components/Productspage";
+import CartDrawer from "./components/cartdrawer";
+import CheckoutModal from "./components/Checkoutmodal";
+import AuthModal from "./components/Authmodal";
+import FavouritesPage from "./components/Favouritespage";
+import OrderHistoryPage from "./components/Orderhistorypage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AboutPage from "./components/AboutPage";
-import ContactPage from "./components/ContactPage";
+import ContactPage from "./components/Contactpage";
 import { ScrollProgressBar } from "./components/ScrollFX";
 
 export const PRODUCTS = [
