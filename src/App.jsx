@@ -12,6 +12,7 @@ import OrderHistoryPage from "./components/OrderHistoryPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AboutPage from "./components/AboutPage";
 import ContactPage from "./components/ContactPage";
+import { ScrollProgressBar } from "./components/ScrollFX";
 
 export const PRODUCTS = [
   // ── TUMBLERS (own category)
@@ -135,6 +136,7 @@ export default function App() {
 
   return (
     <div className="app-wrapper">
+      <ScrollProgressBar />
       {notification && (
         <div className={`toast toast--${notification.type}`}>
           <span className="toast__dot" />

@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import "../App.css";
+import { Tilt3D } from "./ScrollFX";
+import { productImage } from "../lib/productImages";
 
 // Dynamically load product image — falls back to gradient if file not found
 function ProductImage({ img, colors, name }) {
   const [failed, setFailed] = useState(false);
   const gradient = `linear-gradient(135deg, ${colors?.[0] || "#f0e8ff"}, ${colors?.[1] || "#d0c0ef"})`;
+  const src = productImage(img);
 
-  if (img && !failed) {
+  if (src && !failed) {
     return (
       <img
-        src={`/src/assets/Images/${img}`}
+        src={src}
         alt={name}
         className="product-card__img"
         onError={() => setFailed(true)}
@@ -23,7 +26,8 @@ export default function ProductCard({ product, addToCart, toggleFav, favs, custo
   const [expanded, setExpanded] = useState(false);
   const isFav       = favs.includes(product.id);
   const fileAttached = uploadedFiles[product.id];
-  const isLowStock  = product.stock <= 10;
+  const hasStock    = product.stock != null;
+  const isLowStock  = hasStock && product.stock <= 10;
 
   const handleText = (e) => setCustomText(prev => ({ ...prev, [product.id]: e.target.value }));
   const handleFile = (e) => setUploadedFiles(prev => ({ ...prev, [product.id]: e.target.files[0] }));
@@ -33,6 +37,7 @@ export default function ProductCard({ product, addToCart, toggleFav, favs, custo
   };
 
   return (
+    <Tilt3D max={7} scale={1.015} disabled={expanded}>
     <div className="product-card">
 
       {/* ── Image area ── */}
@@ -69,7 +74,7 @@ export default function ProductCard({ product, addToCart, toggleFav, favs, custo
         <div className="product-card__meta">
           <span className="product-card__category">{product.category}</span>
           <span className={`stock-pill${isLowStock ? " stock-pill--low" : ""}`}>
-            {isLowStock ? `Only ${product.stock} left` : `${product.stock} in stock`}
+            {!hasStock ? "Made to order" : isLowStock ? `Only ${product.stock} left` : `${product.stock} in stock`}
           </span>
         </div>
 
@@ -113,5 +118,6 @@ export default function ProductCard({ product, addToCart, toggleFav, favs, custo
         )}
       </div>
     </div>
+    </Tilt3D>
   );
 }

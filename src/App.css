@@ -622,15 +622,17 @@ img { display: block; max-width: 100%; }
    Testimonials, About animations, Contact, Footer upgrades
    ============================================================ */
 
-/* ─── SCROLL REVEAL ANIMATIONS ───────────────────────────── */
+/* ─── SCROLL REVEAL ANIMATIONS — 3D fly-in ───────────────── */
 .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: perspective(1000px) rotateX(16deg) translateY(56px) scale(0.96);
+  transform-origin: 50% 0%;
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
 }
 .reveal.revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
 }
 .reveal-instant { animation: floatUp 0.6s ease both; }
 
@@ -1248,8 +1250,8 @@ img { display: block; max-width: 100%; }
 }
 /* Make testimonial cards always start visible (reveal adds animation but cards show either way) */
 .testimonials .reveal {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0; transform: perspective(1000px) rotateX(14deg) translateY(40px);
+  transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .testimonials .reveal.revealed { opacity: 1; transform: none; }
 /* Fallback: if JS doesn't fire (e.g. already in view on load), still show */
@@ -1446,3 +1448,195 @@ img { display: block; max-width: 100%; }
                         tshirt-one.jpg, tshirt-both.jpg, etc.
    See README.md in that folder for the full list.
    ──────────────────────────────────────────────────────── */
+/* ============================================================
+   3D UPGRADE — Pinned WebGL hero, tilt cards, parallax decor,
+   scroll progress bar
+   ============================================================ */
+
+/* ─── SCROLL PROGRESS BAR ────────────────────────────────── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  z-index: 1200; pointer-events: none;
+  background: transparent;
+}
+.scroll-progress__bar {
+  height: 100%; width: 100%;
+  transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--pink-dark), var(--pink), var(--pink-light));
+  box-shadow: 0 0 12px var(--pink-glow);
+  will-change: transform;
+}
+
+/* ─── 3D HERO (pinned scroll scene) ──────────────────────── */
+.hero3d {
+  position: relative;
+  height: 185vh;               /* scroll distance that drives the 3D scene */
+  background: var(--ink);
+}
+.hero3d__sticky {
+  position: sticky; top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex; align-items: center;
+  background: var(--ink);
+}
+.hero3d__shade {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0.35) 45%, transparent 70%);
+}
+.hero3d__sticky .hero__glow { z-index: 1; }
+.hero3d__content {
+  position: relative; z-index: 2;
+  max-width: 660px;
+  will-change: transform, opacity;
+}
+
+/* Mid-scroll caption — big outlined type that swells in 3D */
+.hero3d__caption {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2; pointer-events: none;
+  opacity: 0; text-align: center; width: 90%;
+  font-family: var(--font-display);
+  will-change: transform, opacity;
+}
+.hero3d__caption span {
+  display: block;
+  font-size: clamp(38px, 6vw, 88px);
+  font-weight: 900; line-height: 1.05; letter-spacing: -2px;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.65);
+}
+.hero3d__caption em {
+  display: block; font-style: normal;
+  font-size: clamp(38px, 6vw, 88px);
+  font-weight: 900; line-height: 1.05; letter-spacing: -2px;
+  color: var(--pink);
+  text-shadow: 0 0 40px var(--pink-glow);
+}
+
+/* Scroll hint — animated mouse indicator */
+.hero3d__hint {
+  position: absolute; left: 50%; bottom: 34px;
+  transform: translateX(-50%);
+  z-index: 2; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+.hero3d__mouse {
+  display: block; width: 24px; height: 38px;
+  border: 2px solid rgba(255,255,255,0.4); border-radius: 14px;
+  position: relative;
+}
+.hero3d__wheel {
+  position: absolute; left: 50%; top: 7px;
+  width: 4px; height: 8px; margin-left: -2px;
+  border-radius: 4px; background: var(--pink);
+  animation: wheelDrop 1.6s ease-in-out infinite;
+}
+@keyframes wheelDrop {
+  0%   { transform: translateY(0);    opacity: 1; }
+  70%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 0; }
+}
+
+/* ─── TILT CARDS ─────────────────────────────────────────── */
+.tilt3d {
+  position: relative;
+  border-radius: var(--r-lg);
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+  height: 100%;
+}
+.tilt3d__glare {
+  position: absolute; inset: 0; z-index: 3;
+  border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+
+/* let 3D reveals breathe in their grids */
+.featured-scroll, .process-steps, .testimonials-grid, .products-grid { perspective: 1100px; }
+
+/* ─── PARALLAX DECOR SHAPES ──────────────────────────────── */
+.process-section, .testimonials, .cta-banner { position: relative; overflow: hidden; }
+.deco { position: absolute; z-index: 0; pointer-events: none; }
+.deco span { display: block; }
+.deco--orb-1 { top: -60px; right: -80px; }
+.deco--orb-1 span {
+  width: 340px; height: 340px; border-radius: 50%;
+  background: radial-gradient(circle, var(--pink-dim) 0%, transparent 68%);
+  filter: blur(2px);
+}
+.deco--ring-1 { bottom: -40px; left: -60px; }
+.deco--ring-1 span {
+  width: 220px; height: 220px; border-radius: 50%;
+  border: 2px solid var(--border-pink);
+  transform: rotate3d(1, 1, 0, 55deg);
+}
+.deco--orb-2 { bottom: -100px; left: -90px; }
+.deco--orb-2 span {
+  width: 380px; height: 380px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,20,147,0.14) 0%, transparent 65%);
+}
+.deco--ring-2 { top: -70px; right: 60px; }
+.deco--ring-2 span {
+  width: 260px; height: 260px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.25);
+  transform: rotate3d(1, 0.6, 0, 60deg);
+}
+.process-inner, .cta-banner__title, .cta-banner__sub, .cta-banner__actions { position: relative; z-index: 1; }
+.testimonials .section-wrap { position: relative; z-index: 1; }
+
+/* ─── STAT POP (subtle 3D hover) ─────────────────────────── */
+.stat { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.stat:hover { transform: perspective(600px) translateZ(14px); }
+
+/* ─── RESPONSIVE / MOTION SAFETY ─────────────────────────── */
+@media (max-width: 900px) {
+  .hero3d { height: 160vh; }
+  .hero3d__shade {
+    background: linear-gradient(180deg, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.4) 60%, transparent 100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero3d { height: auto; min-height: 100vh; }
+  .hero3d__hint, .hero3d__caption { display: none; }
+  .reveal, .testimonials .reveal {
+    transform: none;
+    transition: opacity 0.5s ease;
+  }
+  .tilt3d { transition: none; }
+  .hero3d__wheel { animation: none; }
+}
+
+/* ============================================================
+   FULL-PAGE 3D LAYER — the WebGL canvas is fixed behind the
+   whole home page; the dark veil lifts after the hero and the
+   sections turn translucent so the scene shows through
+   ============================================================ */
+
+/* every home-page section paints above the fixed canvas (z 0);
+   the veil + canvas carry inline styles that win over this rule.
+   The footer lives outside .home-page, so lift it explicitly too —
+   otherwise the shapes render over its text. */
+.home-page > * { position: relative; z-index: 1; }
+.footer { position: relative; z-index: 2; }
+
+/* the hero no longer paints its own black — the veil does */
+.hero3d, .hero3d__sticky { background: transparent; }
+
+/* light sections go frosted so the shapes ghost through */
+.stats-strip {
+  background: rgba(255,255,255,0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* dark sections stay dark but let the scene bleed through */
+.process-section { background: rgba(12,12,14,0.88); }
+.testimonials    { background: rgba(12,12,14,0.90); }
+
+/* featured cards float over the open canvas — lift them slightly */
+.featured-card, .testimonial-card { position: relative; z-index: 1; }
