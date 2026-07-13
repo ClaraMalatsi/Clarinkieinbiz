@@ -65,9 +65,10 @@ function Rig({ progressRef }) {
   }, []);
 
   useFrame(({ camera }) => {
-    const { p, after } = readProgress(progressRef);
-    const hp = easeInOut(p);
-    const targetZ = 11 - hp * 5.5 + after * 3.5; // fly in over the hero, drift back out down the page
+    const { after } = readProgress(progressRef);
+    // Steady banner framing (no fly-into-the-knot); ease back a touch as
+    // the page scrolls so the shapes keep drifting.
+    const targetZ = 8 + after * 2;
     camera.position.z += (targetZ - camera.position.z) * 0.08;
     camera.position.x += (mouse.current.x * 0.7 - camera.position.x) * 0.05;
     camera.position.y += (-mouse.current.y * 0.5 - camera.position.y) * 0.05;
@@ -174,7 +175,7 @@ export default function HeroScene({ progressRef }) {
     <CanvasBoundary>
       <Canvas
         style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
-        camera={{ fov: 50, position: [0, 0, 11] }}
+        camera={{ fov: 50, position: [0, 0, 8] }}
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       >

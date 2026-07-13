@@ -61,14 +61,15 @@ function useHeroScroll({ pinRef, progressRef, contentRef, captionRef, hintRef, v
       // lifts as the light sections arrive
       const doc = document.documentElement;
       const scrollY = window.scrollY || doc.scrollTop;
-      const releaseY = scrollY + rectTop + total;   // scrollY at which the pin lets go
+      const releaseY = scrollY + rectTop + total;
       const afterMax = Math.max(1, doc.scrollHeight - window.innerHeight - releaseY);
       const after = clamp01((scrollY - releaseY) / afterMax);
-      const dark = 1 - clamp01((scrollY - (releaseY - 80)) / 360);
       progressRef.current.p = p;
       progressRef.current.after = after;
-      progressRef.current.dark = dark;
-      if (veilRef.current) veilRef.current.style.opacity = String(dark);
+      // Veil stays dark; shapes are only revealed over the dark hero and
+      // How It Works sections (every other section is opaque), so the
+      // shapes keep their bright colours the whole time.
+      progressRef.current.dark = 1;
 
       if (contentRef.current) {
         const fade = clamp01(1 - p / 0.3);
@@ -196,26 +197,28 @@ export default function HomePage({ setActiveTab }) {
         ))}
       </div>
 
-      {/* ─── FEATURED ─── */}
-      <section className="section-wrap" ref={featuredRef}>
-        <div className="section-header section-header--row">
-          <div>
-            <span className="section-eyebrow">Our Products</span>
-            <h2 className="section-title">Popular This Month</h2>
-            <p className="section-subtitle">From drinkware to signage &#8212; everything your brand needs.</p>
-          </div>
-          <button className="btn btn--outline" onClick={() => setActiveTab("products")}>
-            View All Products
-          </button>
-        </div>
-        <div className="featured-scroll">
-          {featured.map((p, i) => (
-            <div key={p.id} className="reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
-              <Tilt3D max={9} scale={1.02}>
-                <FeaturedCard product={p} onShop={() => setActiveTab("products")} />
-              </Tilt3D>
+      {/* ─── FEATURED — solid band so the 3D shapes don't bleed through ─── */}
+      <section className="featured-band" ref={featuredRef}>
+        <div className="section-wrap">
+          <div className="section-header section-header--row">
+            <div>
+              <span className="section-eyebrow">Our Products</span>
+              <h2 className="section-title">Popular This Month</h2>
+              <p className="section-subtitle">From drinkware to signage &#8212; everything your brand needs.</p>
             </div>
-          ))}
+            <button className="btn btn--outline" onClick={() => setActiveTab("products")}>
+              View All Products
+            </button>
+          </div>
+          <div className="featured-scroll">
+            {featured.map((p, i) => (
+              <div key={p.id} className="reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
+                <Tilt3D max={9} scale={1.02}>
+                  <FeaturedCard product={p} onShop={() => setActiveTab("products")} />
+                </Tilt3D>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
