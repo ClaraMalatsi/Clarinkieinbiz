@@ -71,11 +71,11 @@ const CONTACT_CARDS = [
 ];
 
 const FAQS = [
-  { q: "How long does delivery take?",    a: "Most orders are ready in 3–5 business days. Rush options available — just ask on WhatsApp." },
+  { q: "How long does delivery take?",    a: "Most orders are ready in 3–5 business days. Rush options available, just ask on WhatsApp." },
   { q: "Can I provide my own design?",    a: "Yes! Attach your file (AI, PDF, PNG, SVG) when ordering. We accept all common design formats." },
   { q: "Do you offer bulk discounts?",    a: "Absolutely. The more you order, the better the price. Contact us with your quantity for a quote." },
   { q: "What areas do you deliver to?",   a: "We deliver nationwide across South Africa using reliable couriers." },
-  { q: "Can I see a proof before print?", a: "Yes — we always send a digital proof for your approval before we go to print." },
+  { q: "Can I see a proof before print?", a: "Yes, we always send a digital proof for your approval before we go to print." },
   { q: "What payment methods do you accept?", a: "Card, EFT, Payflex (buy now pay later), SnapScan, Ozow instant EFT, and WhatsApp orders." },
 ];
 
@@ -187,7 +187,7 @@ export default function ContactPage() {
               </div>
               <div className="field">
                 <label>Message *</label>
-                <textarea name="message" rows={5} placeholder="Tell us what you need — the more detail the better!" value={form.message} onChange={handleChange} required />
+                <textarea name="message" rows={5} placeholder="Tell us what you need. The more detail the better!" value={form.message} onChange={handleChange} required />
               </div>
               <button type="submit" className="wa-btn" disabled={!form.name || !form.message}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

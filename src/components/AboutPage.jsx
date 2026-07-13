@@ -27,7 +27,7 @@ const VALUES = [
       </svg>
     ),
     title: "WhatsApp-First",
-    desc: "Order, query, and track on WhatsApp — the most convenient way to do business.",
+    desc: "Order, query, and track on WhatsApp, the most convenient way to do business.",
   },
   {
     icon: (
@@ -45,7 +45,7 @@ const VALUES = [
       </svg>
     ),
     title: "Nationwide Delivery",
-    desc: "We deliver across South Africa — from Pretoria to Johannesburg and beyond.",
+    desc: "We deliver across South Africa, from Pretoria to Johannesburg and beyond.",
   },
   {
     icon: (
@@ -54,14 +54,14 @@ const VALUES = [
       </svg>
     ),
     title: "Personal Service",
-    desc: "You deal directly with us — no bots, no call centres. Real people who care.",
+    desc: "You deal directly with us. No bots, no call centres. Real people who care.",
   },
 ];
 
 const MILESTONES = [
   { year: "2025", title: "Founded",         desc: "Started in a small home studio with one printer and big ambitions." },
   { year: "2026", title: "10 Clients",     desc: "Hit our first 10 happy clients milestone within just 12 months." },
-  { year: "2026", title: "Range Expanded",  desc: "Grew from 3 products to 18+ — signage, design, promotional and more." },
+  { year: "2026", title: "Range Expanded",  desc: "Grew from 3 products to 18+: signage, design, promotional and more." },
   { year: "2026", title: "10+ Clients",    desc: "Now proudly serving 10+ businesses and individuals across SA." },
 ];
 
@@ -99,7 +99,7 @@ export default function AboutPage({ setActiveTab }) {
           </h1>
           <p className="about-hero__sub">
             Clarinkie In Biz is a South African custom printing & branding business with one promise:
-            turn your ideas into stunning products — fast, affordably, and with love.
+            turn your ideas into stunning products, fast, affordably, and with love.
           </p>
           <div className="about-hero__actions">
             <button className="btn btn--primary btn--lg" onClick={() => setActiveTab("products")}>
@@ -182,7 +182,7 @@ export default function AboutPage({ setActiveTab }) {
                 We started Clarinkie In Biz because we saw small businesses struggle to access professional branding without breaking the bank. You shouldn't need a big budget or a full-time marketing team to look amazing.
               </p>
               <p className="why-para" style={{ marginTop: 16 }}>
-                Whether you're ordering your first 10 business cards or kitting out a team of 50 — we treat every order with the same care and attention to detail.
+                Whether you're ordering your first 10 business cards or kitting out a team of 50, we treat every order with the same care and attention to detail.
               </p>
               <a href="https://wa.me/27715719529" target="_blank" rel="noreferrer" className="btn btn--primary" style={{ marginTop: 28 }}>
                 💬 Let's Talk
@@ -203,7 +203,7 @@ export default function AboutPage({ setActiveTab }) {
       {/* ─── CTA ─── */}
       <section className="cta-banner">
         <h2 className="cta-banner__title">Ready to Work With Us?</h2>
-        <p className="cta-banner__sub">Browse our range or contact us directly — we're always happy to help.</p>
+        <p className="cta-banner__sub">Browse our range or contact us directly. We're always happy to help.</p>
         <div className="cta-banner__actions">
           <button className="btn btn--dark btn--lg" onClick={() => setActiveTab("products")}>
             Browse Products

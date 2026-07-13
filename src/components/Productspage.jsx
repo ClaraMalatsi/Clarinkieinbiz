@@ -19,7 +19,7 @@ export default function ProductsPage({
       <div className="section-header" style={{ marginBottom: 36 }}>
         <span className="section-eyebrow">Our Range</span>
         <h1 className="section-title">Shop All Products</h1>
-        <p className="section-subtitle">Browse, customise, and order — all in one place.</p>
+        <p className="section-subtitle">Browse, customise, and order all in one place.</p>
       </div>
 
       {/* Toolbar */}

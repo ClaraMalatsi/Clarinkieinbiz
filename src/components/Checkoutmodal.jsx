@@ -79,7 +79,7 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
 
   const handleConfirm = () => {
     if (payMethod === "whatsapp") {
-      const lines = cart.map(i => `• ${i.name} ×${i.qty} — R${i.price * i.qty}`).join("\n");
+      const lines = cart.map(i => `• ${i.name} ×${i.qty}: R${i.price * i.qty}`).join("\n");
       const msg = `Hello Clarinkie! Order:\n\n${lines}\n\nTotal: R${cartTotal}\n\nPayment: WhatsApp Confirm\nAddress: ${address}${note ? `\nNote: ${note}` : ""}`;
       window.open(`https://wa.me/27715719529?text=${encodeURIComponent(msg)}`, "_blank");
     }

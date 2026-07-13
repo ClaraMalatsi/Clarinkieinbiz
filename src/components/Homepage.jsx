@@ -22,7 +22,7 @@ const STATS = [
 const STEPS = [
   { num: "01", title: "Browse & Choose",  desc: "Find what you need from 21+ print and branding products." },
   { num: "02", title: "Customise",        desc: "Add personalisation details and attach your design file." },
-  { num: "03", title: "Pay Securely",     desc: "Card, EFT, Payflex, SnapScan or Ozow — you choose." },
+  { num: "03", title: "Pay Securely",     desc: "Card, EFT, Payflex, SnapScan or Ozow, you choose." },
   { num: "04", title: "We Deliver",       desc: "We print, pack, and ship nationwide to your door." },
 ];
 
@@ -149,7 +149,7 @@ export default function HomePage({ setActiveTab }) {
             </h1>
             <p className="hero__subtitle">
               Custom printing &amp; branding for businesses, events, and creators.
-              T-shirts, mugs, banners, logo design &#8212; fast and affordable.
+              T-shirts, mugs, banners, logo design. Fast and affordable.
             </p>
             <div className="hero__actions">
               <button className="btn btn--primary btn--lg" onClick={() => setActiveTab("products")}>
@@ -204,7 +204,7 @@ export default function HomePage({ setActiveTab }) {
             <div>
               <span className="section-eyebrow">Our Products</span>
               <h2 className="section-title">Popular This Month</h2>
-              <p className="section-subtitle">From drinkware to signage &#8212; everything your brand needs.</p>
+              <p className="section-subtitle">From drinkware to signage, everything your brand needs.</p>
             </div>
             <button className="btn btn--outline" onClick={() => setActiveTab("products")}>
               View All Products
@@ -251,7 +251,7 @@ export default function HomePage({ setActiveTab }) {
             {[
               { name: "Thandiwe M.", role: "Small Business Owner", text: "The T-shirts came out absolutely stunning. Fast turnaround and the quality blew me away. Will 100% be back!" },
               { name: "Sipho K.",    role: "Event Coordinator",    text: "Ordered pull-up banners last minute and they delivered on time. Professional quality and great communication." },
-              { name: "Aisha P.",   role: "Marketing Manager",     text: "The logo design was worth every cent. Got everything in 4 days — logo, cards, all file formats included." },
+              { name: "Aisha P.",   role: "Marketing Manager",     text: "The logo design was worth every cent. Got everything in 4 days: logo, cards, all file formats included." },
             ].map((t, i) => (
               <div key={t.name} className="reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <Tilt3D max={7} scale={1.015}>
@@ -277,7 +277,7 @@ export default function HomePage({ setActiveTab }) {
       <section className="cta-banner" style={{ marginBottom: 0 }}>
         <Parallax speed={-0.2} className="deco deco--ring-2"><span /></Parallax>
         <h2 className="cta-banner__title">Ready to Build Your Brand?</h2>
-        <p className="cta-banner__sub">Browse our full range or chat with us directly &#8212; we are always ready to help.</p>
+        <p className="cta-banner__sub">Browse our full range or chat with us directly. We are always ready to help.</p>
         <div className="cta-banner__actions">
           <button className="btn btn--dark btn--lg" onClick={() => setActiveTab("products")}>
             Browse All Products

@@ -8,7 +8,7 @@ export default function FavouritesPage({ favProducts, favs, toggleFav, addToCart
       <div className="section-header" style={{ marginBottom: 36 }}>
         <span className="section-eyebrow">Your Wishlist</span>
         <h1 className="section-title">Favourites</h1>
-        <p className="section-subtitle">Items you've saved — ready to order when you are.</p>
+        <p className="section-subtitle">Items you've saved, ready to order when you are.</p>
       </div>
 
       {favProducts.length === 0 ? (

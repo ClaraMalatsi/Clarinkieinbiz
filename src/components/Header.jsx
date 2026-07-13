@@ -29,7 +29,7 @@ export default function Header({ activeTab, setActiveTab, cartCount, favCount, s
 
         {/* ── Logo ── */}
         <div className="logo-wrap" onClick={() => handleNav("home")} role="button" tabIndex={0}>
-          <img src={logo} alt="Clarinkieinbiz — We aim to please" className="nav-logo-img" />
+          <img src={logo} alt="Clarinkieinbiz: We aim to please" className="nav-logo-img" />
         </div>
 
         {/* ── Desktop nav links ── */}
