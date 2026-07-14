@@ -190,10 +190,10 @@ export default function AboutPage({ setActiveTab }) {
             </div>
             <div className="why-image reveal" style={{ transitionDelay: "0.15s" }}>
               <div className="why-image__inner">
-                <div className="why-image__emoji"></div>
+                /*<div className="why-image__emoji"></div>
                 <div className="why-image__tag why-image__tag--1">Fast </div>
                 <div className="why-image__tag why-image__tag--2">Premium </div>
-                <div className="why-image__tag why-image__tag--3">Affordable </div>
+                <div className="why-image__tag why-image__tag--3">Affordable </div>*/
               </div>
             </div>
           </div>
