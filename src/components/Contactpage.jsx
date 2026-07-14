@@ -47,7 +47,7 @@ const CONTACT_CARDS = [
     href: null,
     label: "Business Hours",
     value: "Mon–Fri: 8am–6pm",
-    sub: "Sat: 9am–2pm",
+    sub: "Sat: 8am–8pm",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"/>
