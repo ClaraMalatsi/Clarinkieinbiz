@@ -62,7 +62,7 @@ export default function Footer({ setActiveTab }) {
   const year = new Date().getFullYear();
   return (
     <footer className="footer">
-      {/* Pre-footer CTA — margin-bottom added via CSS class below */}
+      {/* Pre-footer CTA */}
       <div className="footer-cta-strip">
         <div className="footer-cta-strip__inner">
           <div>
@@ -85,7 +85,7 @@ export default function Footer({ setActiveTab }) {
           <div className="footer__brand">
             <div className="footer__logo">Clarinkie<span>.</span></div>
             <p className="footer__tagline">South Africa&#39;s custom print &amp; branding shop. 3 months in, 10+ happy clients and growing. We make your brand look amazing.</p>
-            {/* Social icons — branded colours on hover */}
+            {/* Social icons */}
             <div className="footer-socials">
               {SOCIAL_LINKS.map(s => (
                 <a
@@ -133,7 +133,7 @@ export default function Footer({ setActiveTab }) {
             </div>
           </div>
 
-          {/* Contact col — SVG icons, no emoji */}
+          {/* Contact col */}
           <div>
             <p className="footer__col-title">Contact Us</p>
             <div className="footer__contact-item">
