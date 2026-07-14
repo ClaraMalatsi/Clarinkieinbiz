@@ -111,10 +111,10 @@ export default function AboutPage({ setActiveTab }) {
           </div>
         </div>
         <div className="about-hero__visual">
-          <div className="about-float-card about-float-card--1 reveal-instant">🖨️<span>Premium Printing</span></div>
-          <div className="about-float-card about-float-card--2 reveal-instant">✦<span>Brand Identity</span></div>
-          <div className="about-float-card about-float-card--3 reveal-instant">🚀<span>Fast Delivery</span></div>
-          <div className="about-center-icon">🎨</div>
+          <div className="about-float-card about-float-card--1 reveal-instant"><span>Premium Printing</span></div>
+          <div className="about-float-card about-float-card--2 reveal-instant"><span>Brand Identity</span></div>
+          <div className="about-float-card about-float-card--3 reveal-instant"><span>Fast Delivery</span></div>
+          <div className="about-center-icon"></div>
         </div>
       </section>
 
