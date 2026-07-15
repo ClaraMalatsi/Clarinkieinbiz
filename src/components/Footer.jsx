@@ -1,5 +1,6 @@
 import React from "react";
 import "../App.css";
+import logo from "../assets/Images/logo-footer.png";
 
 const SOCIAL_LINKS = [
   {
@@ -83,7 +84,9 @@ export default function Footer({ setActiveTab }) {
 
           {/* Brand col */}
           <div className="footer__brand">
-            <div className="footer__logo">Clarinkie<span>.</span></div>
+            <div className="footer__logo">
+              <img src={logo} alt="Clarinkieinbiz: We aim to please" className="footer__logo-img" />
+            </div>
             <p className="footer__tagline">South Africa&#39;s custom print &amp; branding shop. 3 months in, 10+ happy clients and growing. We make your brand look amazing.</p>
             {/* Social icons */}
             <div className="footer-socials">

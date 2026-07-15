@@ -593,8 +593,20 @@ img { display: block; max-width: 100%; }
 .footer { background: var(--ink); color: rgba(255,255,255,0.6); padding: 64px 40px 40px; }
 .footer__inner { max-width: 1240px; margin: 0 auto; }
 .footer__top { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-.footer__logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: #fff; margin-bottom: 12px; }
-.footer__logo span { color: var(--pink); }
+/* Logo art assumes a light backdrop (dark wordmark + navy tagline), so
+   it gets a snug white card against the footer's dark background.
+   Source asset is pre-cropped to the wordmark's own bounding box (see
+   logo-footer.png), which is why a modest height reads as nice and wide. */
+.footer__logo {
+  display: inline-flex; align-items: center;
+  background: #fff; padding: 8px;
+  border-radius: var(--r-md);
+  margin-bottom: 20px;
+}
+.footer__logo-img { height: 64px; width: auto; display: block; }
+@media (max-width: 600px) {
+  .footer__logo-img { height: 52px; }
+}
 .footer__tagline { font-size: 14px; line-height: 1.7; max-width: 260px; }
 .footer__col-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #fff; margin-bottom: 18px; }
 .footer__links { display: flex; flex-direction: column; gap: 10px; }
