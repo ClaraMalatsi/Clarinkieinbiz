@@ -1,54 +1,21 @@
 import React, { useState } from "react";
 import "../App.css";
+import { redirectToPayfast, payfastMode } from "../lib/payfast";
+import { savePendingOrder } from "../lib/pendingOrder";
+
+// Flat local delivery fee for Pretoria (the owner delivers these
+// personally). Nationwide orders are arranged separately via courier,
+// same as the rest of the site already says, no extra step here.
+const PRETORIA_DELIVERY_FEE = 60;
 
 const PAYMENT_METHODS = [
   {
-    id: "card",
-    label: "Credit / Debit Card",
-    sub: "Visa, Mastercard, Amex",
+    id: "payfast",
+    label: "Pay Now",
+    sub: "Card or Instant EFT, via PayFast",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-      </svg>
-    ),
-  },
-  {
-    id: "eft",
-    label: "EFT / Bank Transfer",
-    sub: "Direct bank transfer",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-    ),
-  },
-  {
-    id: "payflex",
-    label: "Payflex (Buy Now Pay Later)",
-    sub: "4 interest-free payments",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-      </svg>
-    ),
-  },
-  {
-    id: "snapscan",
-    label: "SnapScan",
-    sub: "Scan QR to pay instantly",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/><rect x="15" y="15" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/><rect x="15" y="18" width="3" height="3"/>
-      </svg>
-    ),
-  },
-  {
-    id: "ozow",
-    label: "Ozow (Instant EFT)",
-    sub: "Pay via your banking app",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
       </svg>
     ),
   },
@@ -64,27 +31,61 @@ const PAYMENT_METHODS = [
   },
 ];
 
-export default function CheckoutModal({ open, onClose, cart, cartTotal, onComplete }) {
-  const [step, setStep]           = useState(1);  // 1=method 2=details 3=confirm
-  const [payMethod, setPayMethod] = useState("");
-  const [address, setAddress]     = useState("");
-  const [note, setNote]           = useState("");
-  const [cardDetails, setCardDetails] = useState({ number:"", name:"", expiry:"", cvv:"" });
-  const [eftRef] = useState(`CLK-${Date.now().toString(36).toUpperCase()}`);
+export default function CheckoutModal({ open, onClose, cart, cartTotal, user, onComplete }) {
+  const [step, setStep]                   = useState(1);  // 1=method 2=details 3=confirm
+  const [payMethod, setPayMethod]         = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState("pretoria"); // "pretoria" | "nationwide"
+  const [address, setAddress]             = useState("");
+  const [note, setNote]                   = useState("");
+  const [orderRef] = useState(`CLK-${Date.now().toString(36).toUpperCase()}`);
 
   if (!open) return null;
 
-  const reset = () => { setStep(1); setPayMethod(""); setAddress(""); setNote(""); setCardDetails({ number:"",name:"",expiry:"",cvv:"" }); };
+  const deliveryFee = deliveryMethod === "pretoria" ? PRETORIA_DELIVERY_FEE : 0;
+  const finalTotal  = cartTotal + deliveryFee;
+
+  const reset = () => { setStep(1); setPayMethod(""); setDeliveryMethod("pretoria"); setAddress(""); setNote(""); };
   const handleClose = () => { reset(); onClose(); };
 
   const handleConfirm = () => {
     if (payMethod === "whatsapp") {
       const lines = cart.map(i => `• ${i.name} ×${i.qty}: R${i.price * i.qty}`).join("\n");
-      const msg = `Hello Clarinkie! Order:\n\n${lines}\n\nTotal: R${cartTotal}\n\nPayment: WhatsApp Confirm\nAddress: ${address}${note ? `\nNote: ${note}` : ""}`;
+      const deliveryLine = deliveryMethod === "pretoria"
+        ? `Delivery: Pretoria (R${PRETORIA_DELIVERY_FEE})`
+        : "Delivery: Nationwide (courier fee to be confirmed)";
+      const msg = `Hello Clarinkie! Order ${orderRef}:\n\n${lines}\n\n${deliveryLine}\nTotal: R${finalTotal}\n\nPayment: WhatsApp Confirm\nAddress: ${address}${note ? `\nNote: ${note}` : ""}`;
       window.open(`https://wa.me/27715719529?text=${encodeURIComponent(msg)}`, "_blank");
+      reset();
+      onComplete({ ref: orderRef, payMethod: "WhatsApp", status: "confirmed", deliveryFee });
+      return;
     }
-    reset();
-    onComplete();
+
+    if (payMethod === "payfast") {
+      const base = `${window.location.origin}${window.location.pathname}`;
+      const [nameFirst, ...rest] = (user?.name || "").split(" ");
+
+      savePendingOrder({
+        ref: orderRef,
+        date: new Date().toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" }),
+        items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+        deliveryMethod, deliveryFee,
+        total: finalTotal,
+        payMethod: "PayFast",
+      });
+
+      redirectToPayfast({
+        returnUrl: `${base}?payfast=success&order=${orderRef}`,
+        cancelUrl: `${base}?payfast=cancel&order=${orderRef}`,
+        nameFirst: nameFirst || undefined,
+        nameLast: rest.join(" ") || undefined,
+        email: user?.email,
+        paymentId: orderRef,
+        amount: finalTotal,
+        itemName: `Clarinkie order ${orderRef}`.slice(0, 90),
+        itemDescription: cart.map(i => `${i.name} x${i.qty}`).join(", ").slice(0, 250),
+      });
+      // Browser navigates away here — nothing after this point runs.
+    }
   };
 
   return (
@@ -127,6 +128,9 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
                   </button>
                 ))}
               </div>
+              {payMethod === "payfast" && payfastMode !== "live" && (
+                <p className="checkout-step__note">Test mode — no real charge will be made yet.</p>
+              )}
               <button className="btn btn--primary btn--full btn--lg" disabled={!payMethod} onClick={() => setStep(2)} style={{ marginTop: 20 }}>
                 Continue →
               </button>
@@ -136,71 +140,29 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
           {/* ── STEP 2: Details ── */}
           {step === 2 && (
             <div className="checkout-step">
-              <h3 className="checkout-step__title">Delivery & {payMethod === "card" ? "Card" : "Order"} Details</h3>
+              <h3 className="checkout-step__title">Delivery Details</h3>
 
-              {payMethod === "card" && (
-                <div className="card-fields">
-                  <div className="field">
-                    <label>Card Number</label>
-                    <input type="text" maxLength={19} placeholder="1234 5678 9012 3456"
-                      value={cardDetails.number}
-                      onChange={e => setCardDetails(p => ({ ...p, number: e.target.value.replace(/\D/g,"").replace(/(.{4})/g,"$1 ").trim() }))} />
-                  </div>
-                  <div className="field">
-                    <label>Name on Card</label>
-                    <input type="text" placeholder="As it appears on card" value={cardDetails.name} onChange={e => setCardDetails(p => ({ ...p, name: e.target.value }))} />
-                  </div>
-                  <div className="form-row">
-                    <div className="field">
-                      <label>Expiry</label>
-                      <input type="text" maxLength={5} placeholder="MM/YY" value={cardDetails.expiry} onChange={e => setCardDetails(p => ({ ...p, expiry: e.target.value }))} />
-                    </div>
-                    <div className="field">
-                      <label>CVV</label>
-                      <input type="text" maxLength={4} placeholder="123" value={cardDetails.cvv} onChange={e => setCardDetails(p => ({ ...p, cvv: e.target.value }))} />
-                    </div>
-                  </div>
+              <div className="field">
+                <label>Delivery</label>
+                <div className="delivery-options">
+                  <button
+                    type="button"
+                    className={`delivery-option${deliveryMethod === "pretoria" ? " selected" : ""}`}
+                    onClick={() => setDeliveryMethod("pretoria")}
+                  >
+                    <span>Local delivery (Pretoria)</span>
+                    <strong>R{PRETORIA_DELIVERY_FEE}</strong>
+                  </button>
+                  <button
+                    type="button"
+                    className={`delivery-option${deliveryMethod === "nationwide" ? " selected" : ""}`}
+                    onClick={() => setDeliveryMethod("nationwide")}
+                  >
+                    <span>Nationwide courier</span>
+                    <strong>Arranged separately</strong>
+                  </button>
                 </div>
-              )}
-
-              {payMethod === "eft" && (
-                <div className="eft-details">
-                  <p className="eft-details__intro">Transfer your payment to the following account and use your order reference:</p>
-                  <div className="eft-details__box">
-                    <div className="eft-row"><span>Bank</span><strong>FNB / Standard Bank</strong></div>
-                    <div className="eft-row"><span>Account Name</span><strong>Clarinkie In Biz</strong></div>
-                    <div className="eft-row"><span>Account No.</span><strong>••• (provided on WhatsApp)</strong></div>
-                    <div className="eft-row"><span>Reference</span><strong className="eft-ref">{eftRef}</strong></div>
-                  </div>
-                </div>
-              )}
-
-              {payMethod === "snapscan" && (
-                <div className="qr-placeholder">
-                  <div className="qr-box">QR Code<br/><span>provided on WhatsApp</span></div>
-                  <p>Open SnapScan, scan the QR code sent to you via WhatsApp, and pay R{cartTotal}.</p>
-                </div>
-              )}
-
-              {payMethod === "ozow" && (
-                <div className="ozow-info">
-                  <p>After confirming your order, you'll receive an Ozow payment link via WhatsApp. Click it to pay instantly via your banking app.</p>
-                </div>
-              )}
-
-              {payMethod === "payflex" && (
-                <div className="payflex-info">
-                  <div className="payflex-breakdown">
-                    {[0,1,2,3].map(i => (
-                      <div key={i} className="payflex-installment">
-                        <span>Payment {i+1}{i===0?" (today)":""}</span>
-                        <strong>R{Math.ceil(cartTotal/4)}</strong>
-                      </div>
-                    ))}
-                  </div>
-                  <p>You'll be redirected to Payflex after confirming your order. No interest, no fees.</p>
-                </div>
-              )}
+              </div>
 
               <div className="field" style={{ marginTop: 20 }}>
                 <label>Delivery Address *</label>
@@ -229,9 +191,13 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
                     <span>R{item.price * item.qty}</span>
                   </div>
                 ))}
+                <div className="checkout-summary__item">
+                  <span>{deliveryMethod === "pretoria" ? "Local delivery (Pretoria)" : "Nationwide courier"}</span>
+                  <span>{deliveryMethod === "pretoria" ? `R${PRETORIA_DELIVERY_FEE}` : "TBC"}</span>
+                </div>
                 <div className="checkout-summary__item checkout-summary__total">
                   <span>Total</span>
-                  <span>R{cartTotal}</span>
+                  <span>R{finalTotal}</span>
                 </div>
               </div>
               <div className="order-confirm-details">
@@ -248,7 +214,7 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
               <div className="checkout-step__actions">
                 <button className="btn btn--ghost" onClick={() => setStep(2)}>← Back</button>
                 <button className="btn btn--primary btn--lg" onClick={handleConfirm}>
-                  {payMethod === "whatsapp" ? "Send via WhatsApp" : "Confirm Order"}
+                  {payMethod === "whatsapp" ? "Send via WhatsApp" : "Pay Now →"}
                 </button>
               </div>
             </div>
@@ -263,9 +229,15 @@ export default function CheckoutModal({ open, onClose, cart, cartTotal, onComple
                 <span className="checkout-sidebar__price">R{item.price * item.qty}</span>
               </div>
             ))}
+            {step >= 2 && (
+              <div className="checkout-sidebar__item">
+                <span className="checkout-sidebar__name">Delivery</span>
+                <span className="checkout-sidebar__price">{deliveryMethod === "pretoria" ? `R${PRETORIA_DELIVERY_FEE}` : "TBC"}</span>
+              </div>
+            )}
             <div className="checkout-sidebar__total">
               <span>Total</span>
-              <span>R{cartTotal}</span>
+              <span>R{step >= 2 ? finalTotal : cartTotal}</span>
             </div>
           </div>
         </div>

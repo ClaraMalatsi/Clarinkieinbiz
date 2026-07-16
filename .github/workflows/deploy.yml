@@ -29,6 +29,15 @@ jobs:
       - run: npm run build
         env:
           GITHUB_PAGES: 'true'
+          # PayFast checkout config. Falls back to PayFast's published
+          # sandbox test credentials when these secrets aren't set, so
+          # the site keeps working (in test mode) before real credentials
+          # are configured. Set these under Settings > Secrets and
+          # variables > Actions once you have a live PayFast account.
+          VITE_PAYFAST_MODE: ${{ vars.PAYFAST_MODE || 'sandbox' }}
+          VITE_PAYFAST_MERCHANT_ID: ${{ secrets.PAYFAST_MERCHANT_ID }}
+          VITE_PAYFAST_MERCHANT_KEY: ${{ secrets.PAYFAST_MERCHANT_KEY }}
+          VITE_PAYFAST_PASSPHRASE: ${{ secrets.PAYFAST_PASSPHRASE }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

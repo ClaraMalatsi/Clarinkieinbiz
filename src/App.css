@@ -1137,22 +1137,21 @@ img { display: block; max-width: 100%; }
 }
 .payment-option.selected .payment-option__radio { border-color: var(--pink); }
 .payment-option__radio-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); }
+.checkout-step__note { font-size: 12px; color: var(--grey-500); margin-top: 10px; text-align: center; }
 
-/* ─── EFT / PAYFLEX / QR ─────────────────────────────────── */
-.eft-details__intro { font-size: 14px; color: var(--grey-700); margin-bottom: 14px; }
-.eft-details__box { border: 1.5px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
-.eft-row { display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
-.eft-row:last-child { border-bottom: none; }
-.eft-row span { color: var(--grey-700); }
-.eft-ref { color: var(--pink); letter-spacing: 1px; }
-.payflex-breakdown { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; border: 1.5px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
-.payflex-installment { display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
-.payflex-installment:last-child { border-bottom: none; }
-.payflex-info p, .ozow-info p { font-size: 14px; color: var(--grey-700); line-height: 1.7; }
-.qr-placeholder { text-align: center; padding: 20px 0; }
-.qr-box { width: 120px; height: 120px; border: 2px dashed var(--border); border-radius: var(--r-md); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; color: var(--grey-500); margin: 0 auto 16px; gap: 4px; }
-.qr-box span { font-size: 11px; }
-.card-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 4px; }
+/* ─── DELIVERY OPTIONS ───────────────────────────────────── */
+.delivery-options { display: flex; flex-direction: column; gap: 8px; }
+.delivery-option {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 14px 16px; border-radius: var(--r-md);
+  border: 1.5px solid var(--border); background: #fff;
+  cursor: pointer; transition: all var(--t); text-align: left; font-family: inherit;
+  font-size: 14px; color: var(--ink);
+}
+.delivery-option:hover { border-color: var(--pink); background: var(--pink-dim); }
+.delivery-option.selected { border-color: var(--pink); background: var(--pink-dim); }
+.delivery-option strong { font-size: 13px; color: var(--grey-700); }
+.delivery-option.selected strong { color: var(--pink); }
 
 /* ─── ORDER CONFIRM DETAILS ──────────────────────────────── */
 .order-confirm-details { border: 1.5px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin: 16px 0; }

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -13,6 +13,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import AboutPage from "./components/AboutPage";
 import ContactPage from "./components/Contactpage";
 import { ScrollProgressBar } from "./components/ScrollFX";
+import { takePendingOrder } from "./lib/pendingOrder";
 
 export const PRODUCTS = [
   // ── TUMBLERS (own category)
@@ -54,11 +55,22 @@ export const PRODUCTS = [
 
 export const CATEGORIES = ["all","tumblers","mugs","apparel","gifts","printing","design","signage"];
 
+// Redirecting to PayFast navigates the whole browser away and back, which
+// remounts the app from scratch — any state kept only in memory (cart,
+// order history) would otherwise vanish even on a cancelled payment.
+function loadPersisted(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
+  }
+}
+
 export default function App() {
   const [activeTab, setActiveTab]           = useState("home");
-  const [cart, setCart]                     = useState([]);
+  const [cart, setCart]                     = useState(() => loadPersisted("clarinkie_cart"));
   const [favs, setFavs]                     = useState([]);
-  const [orders, setOrders]                 = useState([]);
+  const [orders, setOrders]                 = useState(() => loadPersisted("clarinkie_orders"));
   const [cartOpen, setCartOpen]             = useState(false);
   const [checkoutOpen, setCheckoutOpen]     = useState(false);
   const [authOpen, setAuthOpen]             = useState(false);
@@ -70,6 +82,9 @@ export default function App() {
   const [customText, setCustomText]         = useState({});
   const [uploadedFiles, setUploadedFiles]   = useState({});
   const [notification, setNotification]     = useState(null);
+
+  useEffect(() => { localStorage.setItem("clarinkie_cart", JSON.stringify(cart)); }, [cart]);
+  useEffect(() => { localStorage.setItem("clarinkie_orders", JSON.stringify(orders)); }, [orders]);
 
   const showNotification = useCallback((msg, type = "success") => {
     setNotification({ msg, type });
@@ -113,14 +128,13 @@ export default function App() {
   const openAuth       = (mode = "login") => { setAuthMode(mode); setAuthOpen(true); };
 
   const handlePaymentComplete = useCallback((orderData) => {
-    // Save to order history
     const newOrder = {
-      ref: `CLK-${Date.now().toString(36).toUpperCase()}`,
+      ref: orderData.ref,
       date: new Date().toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" }),
       items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
-      total: cartTotal,
-      status: "confirmed",
-      payMethod: orderData?.payMethod || "Pending",
+      total: cartTotal + (orderData.deliveryFee || 0),
+      status: orderData.status || "confirmed",
+      payMethod: orderData.payMethod || "Pending",
     };
     setOrders(prev => [newOrder, ...prev]);
     setCart([]);
@@ -128,6 +142,30 @@ export default function App() {
     setCartOpen(false);
     showNotification("Order confirmed! Thank you");
   }, [cart, cartTotal, showNotification]);
+
+  // PayFast redirects the whole browser away and back, which wipes React
+  // state (cart, orders), so the order details are stashed in
+  // localStorage before redirecting and picked back up here on return.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payfastStatus = params.get("payfast");
+    if (!payfastStatus) return;
+
+    if (payfastStatus === "success") {
+      const pending = takePendingOrder();
+      if (pending) {
+        setOrders(prev => [{ ...pending, status: "pending" }, ...prev]);
+        setCart([]);
+        setActiveTab("orders");
+        showNotification("Payment submitted — we'll confirm and get your order moving shortly");
+      }
+    } else if (payfastStatus === "cancel") {
+      takePendingOrder();
+      showNotification("Payment cancelled — your cart is still waiting for you", "cancelled");
+    }
+
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [showNotification]);
 
   const navigateTo = useCallback((tab) => {
     setActiveTab(tab);
@@ -193,7 +231,7 @@ export default function App() {
 
       <CheckoutModal
         open={checkoutOpen} onClose={() => setCheckoutOpen(false)}
-        cart={cart} cartTotal={cartTotal} onComplete={handlePaymentComplete}
+        cart={cart} cartTotal={cartTotal} user={user} onComplete={handlePaymentComplete}
       />
 
       <AuthModal
