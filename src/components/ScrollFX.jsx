@@ -4,9 +4,7 @@ const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-/* ─── Tilt3D ──────────────────────────────────────────────────
-   Mouse-tracked 3D tilt with a moving light glare.
-   Wrap any card: <Tilt3D><Card /></Tilt3D> */
+/* ─── Tilt3D ────────────────────────────────────────────────── */
 export function Tilt3D({ children, max = 10, scale = 1.02, glare = true, disabled = false, className = "", style }) {
   const ref = useRef(null);
   const glareRef = useRef(null);
@@ -50,10 +48,7 @@ export function Tilt3D({ children, max = 10, scale = 1.02, glare = true, disable
   );
 }
 
-/* ─── Parallax ────────────────────────────────────────────────
-   Moves its children vertically at a different speed to the page
-   scroll. The outer div is never transformed so measurement stays
-   stable; the inner div carries the translate. */
+/* ─── Parallax ──────────────────────────────────────────────── */
 export function Parallax({ speed = 0.18, className = "", style, children, ariaHidden = true }) {
   const outer = useRef(null);
   const inner = useRef(null);
@@ -87,8 +82,7 @@ export function Parallax({ speed = 0.18, className = "", style, children, ariaHi
   );
 }
 
-/* ─── ScrollProgressBar ───────────────────────────────────────
-   Thin pink bar under the nav showing page scroll progress. */
+/* ─── ScrollProgressBar ─────────────────────────────────────── */
 export function ScrollProgressBar() {
   const ref = useRef(null);
 
