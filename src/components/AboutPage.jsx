@@ -193,7 +193,8 @@ export default function AboutPage({ setActiveTab }) {
                 { /*<div className="why-image__emoji"></div>
                 <div className="why-image__tag why-image__tag--1">Fast </div>
                 <div className="why-image__tag why-image__tag--2">Premium </div>
-                <div className="why-image__tag why-image__tag--3">Affordable </div>*/}
+                <div className="why-image__tag why-image__tag--3">Affordable </div>*/
+                <img src="bottle.jpg" width=350 height=350>}
               </div>
             </div>
           </div>
