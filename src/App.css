@@ -1635,20 +1635,17 @@ img { display: block; max-width: 100%; }
 .home-page > * { position: relative; z-index: 1; }
 .footer { position: relative; z-index: 2; }
 
-/* Only the hero and How It Works reveal the 3D scene. The hero and
-   How It Works are transparent/translucent so the fixed canvas shows
-   through; every other section is fully OPAQUE so the shapes never
-   bleed into their content. */
+/* The 3D scene shows on the hero, How It Works and What Our Clients Say
+   (translucent dark sections); the store and stats strip are solid so
+   the shapes never interrupt the product cards. */
 
 /* the hero no longer paints its own black — the veil behind the canvas does */
 .hero3d, .hero3d__sticky { background: transparent; }
 
-/* How It Works + What Our Clients Say: translucent dark so the shapes
-   ghost through */
 .process-section { background: rgba(12,12,14,0.9); }
 .testimonials    { background: rgba(12,12,14,0.9); }
 
-/* everything else: solid, shapes stay hidden behind them */
+/* store + stats: solid, shapes stay hidden behind them */
 .stats-strip     { background: #fff; }
 .featured-band   { background: var(--off-white); }
 
