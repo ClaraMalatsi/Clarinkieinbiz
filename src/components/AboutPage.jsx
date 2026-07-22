@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "../App.css";
+import bottleImg from "../assets/Images/bottle.jpg";
 
 const VALUES = [
   {
@@ -190,14 +191,7 @@ export default function AboutPage({ setActiveTab }) {
             </div>
             <div className="why-image reveal" style={{ transitionDelay: "0.15s" }}>
               <div className="why-image__inner">
-                <img src="bottle.jpg" width =350 height=350>
-                { 
-                   <div className="why-image__tag why-image__tag--1"> <img src="" width=350 height=350> </div>/
-                  /*
-                <div className="why-image__tag why-image__tag--1">Fast </div>
-                <div className="why-image__tag why-image__tag--2">Premium </div>
-                <div className="why-image__tag why-image__tag--3">Affordable </div>*/
-                }
+                <img className="why-image__photo" src={bottleImg} alt="Branded water bottle printed by Clarinkie In Biz" />
               </div>
             </div>
           </div>
